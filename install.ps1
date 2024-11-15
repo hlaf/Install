@@ -50,6 +50,9 @@
     Use the credentials of the current user for the proxy server that is specified by the -Proxy parameter.
 .PARAMETER RunAsAdmin
     Force to run the installer as administrator.
+.PARAMETER UseGit
+    Specifies whether to attempt Git-based installation.
+    If not set, the installer will attempt a Git-based installation before defaulting to downloading zip files.
 .LINK
     https://scoop.sh
 .LINK
@@ -63,7 +66,8 @@ param(
     [Uri] $Proxy,
     [System.Management.Automation.PSCredential] $ProxyCredential,
     [Switch] $ProxyUseDefaultCredentials,
-    [Switch] $RunAsAdmin
+    [Switch] $RunAsAdmin,
+    [bool] $UseGit = $true
 )
 
 # Disable StrictMode in this script
@@ -582,7 +586,7 @@ function Install-Scoop {
     $downloader = Get-Downloader
     [bool]$downloadZipsRequired = $True
 
-    if (Test-CommandAvailable('git')) {
+    if ($UseGit -and (Test-CommandAvailable 'git')) {
         $old_https = $env:HTTPS_PROXY
         $old_http = $env:HTTP_PROXY
         try {
