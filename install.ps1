@@ -53,6 +53,22 @@
 .PARAMETER UseGit
     Specifies whether to attempt Git-based installation.
     If not set, the installer will attempt a Git-based installation before defaulting to downloading zip files.
+.PARAMETER ForkUsername
+    Specifies the GitHub username of the forked Scoop repository to use during installation.
+    Defaults to 'ScoopInstaller', which points to the official Scoop repository.
+    Example: -ForkUsername "myusername"
+.PARAMETER BucketForkUsername
+    Specifies the GitHub username of the forked Main bucket repository to use during installation.
+    Defaults to 'ScoopInstaller', which points to the official Main bucket repository.
+    Example: -BucketForkUsername "myusername"
+.PARAMETER CommitHash
+    Specifies the commit hash or branch name to use for the Scoop repository during installation.
+    Defaults to 'master'.
+    Example: -CommitHash "abc123"
+.PARAMETER BucketCommitHash
+    Specifies the commit hash or branch name to use for the Main bucket repository during installation.
+    Defaults to 'master'.
+    Example: -BucketCommitHash "def456"
 .LINK
     https://scoop.sh
 .LINK
@@ -67,7 +83,11 @@ param(
     [System.Management.Automation.PSCredential] $ProxyCredential,
     [Switch] $ProxyUseDefaultCredentials,
     [Switch] $RunAsAdmin,
-    [bool] $UseGit = $true
+    [bool] $UseGit = $true,
+    [String] $ForkUsername = 'ScoopInstaller',
+    [String] $BucketForkUsername = 'ScoopInstaller',
+    [String] $CommitHash = 'master',
+    [String] $BucketCommitHash = 'master'
 )
 
 # Disable StrictMode in this script
@@ -702,11 +722,11 @@ $SCOOP_CONFIG_HOME = $env:XDG_CONFIG_HOME, "$env:USERPROFILE\.config" | Select-O
 $SCOOP_CONFIG_FILE = "$SCOOP_CONFIG_HOME\scoop\config.json"
 
 # TODO: Use a specific version of Scoop and the main bucket
-$SCOOP_PACKAGE_REPO = 'https://github.com/ScoopInstaller/Scoop/archive/master.zip'
-$SCOOP_MAIN_BUCKET_REPO = 'https://github.com/ScoopInstaller/Main/archive/master.zip'
+$SCOOP_PACKAGE_REPO = "https://github.com/$ForkUsername/Scoop/archive/$CommitHash.zip"
+$SCOOP_MAIN_BUCKET_REPO = "https://github.com/$BucketForkUsername/Main/archive/$BucketCommitHash.zip"
 
-$SCOOP_PACKAGE_GIT_REPO = 'https://github.com/ScoopInstaller/Scoop.git'
-$SCOOP_MAIN_BUCKET_GIT_REPO = 'https://github.com/ScoopInstaller/Main.git'
+$SCOOP_PACKAGE_GIT_REPO = "https://github.com/$ForkUsername/Scoop.git"
+$SCOOP_MAIN_BUCKET_GIT_REPO = "https://github.com/$BucketForkUsername/Main.git"
 
 # Quit if anything goes wrong
 $oldErrorActionPreference = $ErrorActionPreference
